@@ -80,20 +80,32 @@ app.get('/files/:id',async(req,res)=>{
                 type:"anyone"
             }
         })
-        const response = await drive.files.get({
-            fileId:id,
-            alt:'media',
-            // fields:'webViewLink, webContentLink'
-            // q: 'mimeType=\'image/jpeg\'',
-            // fields: 'nextPageToken, files(id, name)',
-            // spaces: 'drive',
-        });
+        drive.files.get({ fileId: id, alt: 'media' }, { responseType: 'stream' },
+            function (err, response) {
+                response.data
+                    .on('end', () => {
+                        console.log('Done');
+                    })
+                    .on('error', err => {
+                        console.log('Error', err);
+                    })
+                    .pipe(res);
+            }
+        );
+        // const response = await drive.files.get({
+        //     fileId:id,
+        //     alt:'media',
+        //     // fields:'webViewLink, webContentLink'
+        //     // q: 'mimeType=\'image/jpeg\'',
+        //     // fields: 'nextPageToken, files(id, name)',
+        //     // spaces: 'drive',
+        // });
         // Array.prototype.push.apply(files, response.files);
         // response.data.files.forEach(function(file) {
         //     console.log('Found file:', file.name, file.id);
         // });
-        res.send(response.data);
-        console.log(response.data)
+        // res.send(response.data);
+        // console.log(response.data)
     } catch (error) {
         res.status(500).send({error:error.message})
     }

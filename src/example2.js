@@ -135,7 +135,8 @@ app.post('/download/:id', (req, res) => {
                     console.log('Error', err);
                 })
                 .pipe(res);
-        });
+        }
+    );
 
 });
 
